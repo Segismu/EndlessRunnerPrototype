@@ -8,16 +8,21 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] float spawnDelay = 2;
     [SerializeField] float spawnInterval = 1.5f;
     Vector3 spawnPos = new Vector3(25, 0, 0);
+    private PlayerController playerControllerScript;
     
 
     void Start()
     {
         InvokeRepeating("SpawnObstacle", spawnDelay, spawnInterval);
+        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
     }
 
     void SpawnObstacle()
     {
-        Instantiate(obstaclePrefab, spawnPos, obstaclePrefab.transform.rotation);
-
+        if (playerControllerScript.gameOver == false)
+        {
+            Instantiate(obstaclePrefab, spawnPos, obstaclePrefab.transform.rotation);
+        }
+        
     }
 }
