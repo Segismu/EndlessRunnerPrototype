@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     Rigidbody playerRb;
+    Animator playerAnim;
     [SerializeField] float jumpForce = 10;
     [SerializeField] float gravityModifier = 1;
     public bool isGrounded = true;
@@ -16,15 +17,17 @@ public class PlayerController : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         Physics.gravity *= gravityModifier;
+        playerAnim = GetComponent<Animator>();
     }
 
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) &&  isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) &&  isGrounded && !gameOver)
         {
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isGrounded = false;
+            playerAnim.SetTrigger("Jump_trig");
         }
     }
 
@@ -38,6 +41,8 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Game Over");
             gameOver = true;
+            playerAnim.SetBool("Death_b", true);
+            playerAnim.SetInteger("DeathType_int", 1);
         }
 
     }
