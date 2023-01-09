@@ -6,6 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     Rigidbody playerRb;
     Animator playerAnim;
+    AudioSource playerAudio;
+    public ParticleSystem dirtAnim;
+    public ParticleSystem explosionAnim;
+    public AudioClip jumpSound;
+    public AudioClip crashSound;
     [SerializeField] float jumpForce = 10;
     [SerializeField] float gravityModifier = 1;
     public bool isGrounded = true;
@@ -15,9 +20,10 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        playerRb = GetComponent<Rigidbody>();
         Physics.gravity *= gravityModifier;
+        playerRb = GetComponent<Rigidbody>();
         playerAnim = GetComponent<Animator>();
+        playerAudio = GetComponent<AudioSource>();
     }
 
 
@@ -27,7 +33,9 @@ public class PlayerController : MonoBehaviour
         {
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isGrounded = false;
+            playerAudio.PlayOneShot(jumpSound, 1.5f);
             playerAnim.SetTrigger("Jump_trig");
+            dirtAnim.Stop();
         }
     }
 
@@ -36,6 +44,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            dirtAnim.Play();
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
@@ -43,6 +52,9 @@ public class PlayerController : MonoBehaviour
             gameOver = true;
             playerAnim.SetBool("Death_b", true);
             playerAnim.SetInteger("DeathType_int", 1);
+            dirtAnim.Stop();
+            explosionAnim.Play();
+            playerAudio.PlayOneShot(crashSound, 2f);
         }
 
     }
