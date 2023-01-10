@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float gravityModifier = 1;
     public bool isGrounded = true;
     public bool gameOver = false;
+    public bool doubleJump = false;
     
 
 
@@ -29,14 +30,25 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) &&  isGrounded && !gameOver)
+        if (Input.GetKeyDown(KeyCode.Space) &&  isGrounded && !gameOver && doubleJump == false)
         {
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isGrounded = false;
             playerAudio.PlayOneShot(jumpSound, 1.5f);
             playerAnim.SetTrigger("Jump_trig");
             dirtAnim.Stop();
+            isGrounded = false;
+            doubleJump = true;
         }
+        else if (Input.GetKeyDown(KeyCode.Space) && !gameOver && doubleJump == true)
+        {
+            playerRb.AddForce(Vector3.up * jumpForce * 0.85f , ForceMode.Impulse);
+            playerAudio.PlayOneShot(jumpSound, 1.5f);
+            playerAnim.SetTrigger("Jump_trig");
+            dirtAnim.Stop();
+            doubleJump = false;
+        }
+
+
     }
 
     private void OnCollisionEnter(Collision collision)
